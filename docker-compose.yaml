@@ -1,0 +1,38 @@
+version: "3.9"
+
+networks:
+
+  # rete per la comunicazione interna dei containers
+  shop-net:
+    name: shop-net
+    ##########################################
+secrets:
+  MONGO_ROOT_PW:
+    file: lib/secrets/MONGO_ROOT_PW
+    ##########################################
+volumes:
+  shop-vol:
+    name: shop-vol
+
+##########################################
+services:
+
+  backup:
+    image: ildug/mongodump
+    restart: unless-stopped
+    container_name: db-backup
+    depends_on:
+      - db
+    # environment:
+    #   MONGO_ROOT_PW_FILE: /run/secrets/MONGO_ROOT_PW
+    #   USER: root
+    #   HOST: db
+    #   PORT: 27017
+    #   DB: shop
+    networks:
+      - shop-net
+    volumes:
+      - ./api:/app
+      - ./lib/assets:/app/assets
+    secrets:
+      - MONGO_ROOT_PW
