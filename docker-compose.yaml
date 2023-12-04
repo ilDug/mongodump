@@ -29,10 +29,10 @@ services:
     #   HOST: db
     #   PORT: 27017
     #   DB: shop
+    #   CRON: "* * * * *"
     networks:
       - shop-net
     volumes:
-      - ./api:/app
-      - ./lib/assets:/app/assets
+      - ./backup:/backup
     secrets:
       - MONGO_ROOT_PW

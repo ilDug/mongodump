@@ -1,3 +1,7 @@
+secrets/
+backup/
+docker-compose.test.yaml
+
 # Logs
 logs
 *.log

@@ -1,20 +1,41 @@
 #!/bin/sh
 
-# PW=$(echo $MONGO_ROOT_PW_FILE)
-PW="cippa"
+PW=$(cat $MONGO_ROOT_PW_FILE)
+# PW="cippa"
 
-# connection string
-CS="mongodb://$USER:$PW@$HOST:$PORT/$DB?authSource=admin"
+
+if [ $HOSTS -eq false ]
+then
+    # connection string
+    CS="mongodb://$USER:$PW@$HOST:$PORT/$DB?authSource=$AUTH_SOURCE"
+else
+    # connection string
+    CS="mongodb://$USER:$PW@$HOSTS/$DB?authSource=$AUTH_SOURCE&replicaSet=$REPLSET"
+fi
 
 echo $CS
 
 
-# montare una cartella sul server dove salvare il BACKUP
+# percorso file de log mensile
+LOGFILE="/backup/backup.$(date +%Y.%m).log"
 
-# echo $(date) >>/backup/backup.$(date +%Y.%m).log
+echo $(date) >>$LOGFILE
 
-# docker exec mongodb sh -c "mongodump -v  -u root -p $MONGO_ROOT_PW --authenticationDatabase admin --out=/backup --db=ek" 2>&1 | tee -a /backup/backup.$(date +%Y.%m).log
-
-# echo $? >>/backup/backup.$(date +%Y.%m).log
+# BACKUP MONGODUMP
 ####################################################################################
-# docker exec mongodb sh -c "mongorestore -v -u root -p $MONGO_ROOT_PW --authenticationDatabase admin --dir=/backup --drop"
+if [ $ARCHIVE = false ]
+then
+    mongodump -v --uri $CS --out=/backup  2>&1 | tee -a $LOGFILE
+else
+    ARCHIVE_NAME="$DB-$(date +%Y.%m.%d.%H.%M.%S).gz"
+    mongodump -v --uri $CS --archive=/backup/$ARCHIVE_NAME --gzip 2>&1 | tee -a $LOGFILE
+fi
+
+# mongodump -v -u root -p $MONGO_ROOT_PW --authenticationDatabase admin --out=/backup --db=ek  2>&1 | tee -a $LOGFILE
+
+echo $? >>$LOGFILE
+
+
+# RESTORE
+####################################################################################
+# mongorestore -v -u root -p $MONGO_ROOT_PW --authenticationDatabase admin --dir=/backup --drop
