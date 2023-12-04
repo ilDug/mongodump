@@ -23,13 +23,21 @@ services:
     container_name: db-backup
     depends_on:
       - db
-    # environment:
-    #   MONGO_ROOT_PW_FILE: /run/secrets/MONGO_ROOT_PW
-    #   USER: root
-    #   HOST: db
-    #   PORT: 27017
-    #   DB: shop
-    #   CRON: "* * * * *"
+    environment:
+      MONGO_ROOT_PW_FILE: /run/secrets/MONGO_ROOT_PW
+      USER: root
+
+      HOST: db
+      PORT: 27017
+      
+      # REPLSET: rs0
+      # HOSTS: host01.com:27017,host02.com:27017,host03.com:27017
+      
+      DB: shop
+      CRON: "0 4 * * *"
+
+      ARCHIVE: true
+
     networks:
       - shop-net
     volumes:
