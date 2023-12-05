@@ -4,7 +4,7 @@ PW=$(cat $MONGO_ROOT_PW_FILE)
 # PW="cippa"
 
 
-if [ $HOSTS -eq false ]
+if [ $HOSTS = false ]
 then
     # connection string
     CS="mongodb://$USER:$PW@$HOST:$PORT/$DB?authSource=$AUTH_SOURCE"
