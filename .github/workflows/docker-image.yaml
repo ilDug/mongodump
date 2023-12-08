@@ -46,5 +46,5 @@ jobs:
                 --file Dockerfile \
                 --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
                 --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.version }} \
-                --platform linux/amd64 \
+                --platform linux/amd64,linux/arm64,darwin/amd64,darwin/arm64 \
                 --push
